@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
         } catch (JSONException e) {
             e.printStackTrace();
-//            jsonArray = new JSONArray();
+            jsonArray = new JSONArray();
 //            jsonArray.put(new Item("HMS","My"));
         }
 //        arrayList = new ArrayList<>();
