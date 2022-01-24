@@ -37,11 +37,12 @@ public class ItemActivity extends AppCompatActivity {
             Item item = (Item) getIntent().getSerializableExtra("item");
             title.setText(item.getString1());
             multi.setText(item.getString2());
-            findViewById(R.id.InsertButton).setOnClickListener(new View.OnClickListener() {
+            findViewById(R.id.SaveButton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     EditText title = findViewById(R.id.EditTextTitle);
                     EditText multi = findViewById(R.id.EditTextMulti);
+                    if(!title.getText().toString().isEmpty()||!multi.getText().toString().isEmpty())
                     setResult(REQUEST_CODE+1,new Intent().putExtra("item",new Item(
                             title.getText().toString(),multi.getText().toString()
                     )));
@@ -49,11 +50,12 @@ public class ItemActivity extends AppCompatActivity {
                 }
             });
         }else{
-            findViewById(R.id.InsertButton).setOnClickListener(new View.OnClickListener() {
+            findViewById(R.id.SaveButton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     EditText title = findViewById(R.id.EditTextTitle);
                     EditText multi = findViewById(R.id.EditTextMulti);
+                    if(!title.getText().toString().isEmpty()||!multi.getText().toString().isEmpty())
                     setResult(REQUEST_CODE,new Intent().putExtra("item",new Item(
                             title.getText().toString(),multi.getText().toString()
                     )));

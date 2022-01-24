@@ -22,6 +22,7 @@ import com.huawei.hms.common.ApiException;
 import com.huawei.hms.support.account.AccountAuthManager;
 import com.huawei.hms.support.account.request.AccountAuthParams;
 import com.huawei.hms.support.account.request.AccountAuthParamsHelper;
+import com.huawei.hms.support.account.result.AuthAccount;
 import com.huawei.hms.support.account.service.AccountAuthService;
 import com.pmc.huawei.verification.beans.IdTokenEntity;
 import com.pmc.huawei.verification.interfaces.IVerifyCallBack;
@@ -35,12 +36,15 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE = 2000;
+    private static final int REQUEST_CODE_AUTH = 1000;
+    private static final int REQUEST_CODE_ITEM = 2000;
+    private AccountAuthParams mAuthParam;
+    private AccountAuthService mAuthService;
 //    private ArrayList<Item> arrayList;
     private RecyclerView recyclerView;
     private int current;
     private SharedPreferences preferences;
-    private JSONArray jsonArray = new JSONArray();
+    private JSONArray jsonArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,9 +55,13 @@ public class MainActivity extends AppCompatActivity {
         bannerView.setBannerAdSize(BannerAdSize.BANNER_SIZE_360_57);
         bannerView.setBannerRefresh(60);
         bannerView.loadAd(new AdParam.Builder().build());
+        mAuthParam = new AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
+                .setIdToken().createParams();
+        mAuthService = AccountAuthManager.getService(getApplicationContext(), mAuthParam);
         IdTokenUtils idTokenUtils = new IdTokenUtils();
         IdTokenEntity idTokenEntity = idTokenUtils.decodeJsonStringFromIdtoken(preferences.getString("token",null));
         if (idTokenEntity != null) {
+            findViewById(R.id.HuaweiIdAuthButton).setVisibility(View.GONE);
             Log.i("Token", idTokenEntity.toString() + "\n" + "exp:" + idTokenEntity.getExpTime());
             idTokenUtils.validateIdToken(preferences.getString("union",""), preferences.getString("token",""),
                     "105393881", idTokenEntity, new IVerifyCallBack() {
@@ -81,8 +89,14 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         }else{
-            finish();
-            startActivity(new Intent(this,LoginActivity.class));
+            findViewById(R.id.SignOutButton).setVisibility(View.GONE);
+            findViewById(R.id.CancelAuthButton).setVisibility(View.GONE);
+            findViewById(R.id.HuaweiIdAuthButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivityForResult(mAuthService.getSignInIntent(), REQUEST_CODE_AUTH);
+                }
+            });
         }
     }
 
@@ -91,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         current = -1;
 
-        AccountAuthService mAuthService = AccountAuthManager.getService(getApplicationContext(),
-                new AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
-                .createParams());
+//        AccountAuthService mAuthService = AccountAuthManager.getService(getApplicationContext(),
+//                new AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
+//                .createParams());
         findViewById(R.id.SignOutButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("Account", "signOut complete");
                         PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
                                 .putString("token",null).putString("open",null).apply();
-                        finish();
-                        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                        finish();jsonArray=new JSONArray();
+                        startActivity(new Intent(getApplicationContext(),MainActivity.class));
                     }
                 });
             }
@@ -121,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.i("Account", "onSuccess: ");
                             PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
                                     .putString("token",null).putString("union",null).putString("open",null).apply();
-                            finish();
-                            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                            finish();jsonArray=new JSONArray();
+                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         } else {
                             // Handle the exception.
                             Exception exception = task.getException();
@@ -137,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.CreateButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(getApplicationContext(), ItemActivity.class),REQUEST_CODE);
+                startActivityForResult(new Intent(getApplicationContext(), ItemActivity.class),REQUEST_CODE_ITEM);
             }
         });
         try {
@@ -159,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(jsonArray.getString(item));
                     startActivityForResult(new Intent(getApplicationContext(), ItemActivity.class)
-                            .putExtra("item",new Item(object.getString("string1"),object.getString("string2"))),REQUEST_CODE+1);
+                            .putExtra("item",new Item(object.getString("string1"),object.getString("string2"))),REQUEST_CODE_ITEM+1);
                     current = item;
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -170,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClickButton(int item) {
 //                arrayList.remove(item);
                 jsonArray.remove(item);
-                Objects.requireNonNull(recyclerView.getAdapter()).notifyItemRemoved(item);
+                recyclerView.getAdapter().notifyItemRemoved(item);
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
                         .putString(preferences.getString("open","items"),jsonArray.toString()).apply();
             }
@@ -181,22 +195,41 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(data!=null){
-            Item item = (Item) data.getSerializableExtra("item");
-            if(requestCode==REQUEST_CODE){
+            if (requestCode == REQUEST_CODE_AUTH) {
+                Task<AuthAccount> authAccountTask = AccountAuthManager.parseAuthResultFromIntent(data);
+                if (authAccountTask.isSuccessful()) {
+                    // The sign-in is successful, and the user's ID information and ID token are obtained.
+                    AuthAccount authAccount = authAccountTask.getResult();
+                    Log.i("Account", "idToken:" + authAccount.getIdToken());
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString("token",authAccount.getIdToken())
+                            .putString("union",authAccount.getUnionId()).putString("open",authAccount.getOpenId()).apply();
+                    jsonArray=new JSONArray();
+                    finish();
+                    startActivity(new Intent(this,MainActivity.class));
+                } else {
+                    // The sign-in failed. No processing is required. Logs are recorded for fault locating.
+                    Log.e("Account", "sign in failed : " +((ApiException) authAccountTask.getException()).getStatusCode());
+                }
+            }else
+            if(requestCode==REQUEST_CODE_ITEM){
 //                arrayList.add(item);
-                jsonArray.put(item);
-            }else if(requestCode==REQUEST_CODE+1){
+                jsonArray.put((Item) data.getSerializableExtra("item"));
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
+                        .putString(preferences.getString("open","items"),jsonArray.toString()).apply();
+                Log.d("json",jsonArray.toString());
+            }else if(requestCode==REQUEST_CODE_ITEM+1){
                 try {
+                    Item item = (Item) data.getSerializableExtra("item");
 //                    arrayList.get(current).setString1(item.getString1());
 //                    arrayList.get(current).setString2(item.getString2());
                     jsonArray.put(current,item);
+                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
+                            .putString(preferences.getString("open","items"),jsonArray.toString()).apply();
+                    Log.d("json",jsonArray.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
-                    .putString(preferences.getString("open","items"),jsonArray.toString()).apply();
-            Log.d("json",jsonArray.toString());
         }
     }
 
