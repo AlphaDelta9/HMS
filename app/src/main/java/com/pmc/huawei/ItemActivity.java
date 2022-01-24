@@ -24,7 +24,6 @@ public class ItemActivity extends AppCompatActivity {
         findViewById(R.id.ScanButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startActivityForResult(new Intent(getApplicationContext(),ScanActivity.class),REQUEST_CODE);
                 ItemActivity.this.requestPermissions(
                         new String[]{android.Manifest.permission.CAMERA,
                                 android.Manifest.permission.READ_EXTERNAL_STORAGE},
