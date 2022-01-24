@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">PMC</string>
+    <string name="delete">Delete</string>
+    <string name="title">Title</string>
+    <string name="scan">Scan</string>
+    <string name="content">Content</string>
+    <string name="save">Save</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="create">Create</string>
+    <string name="remove_authorization">Remove Authorization</string>
+</resources>
