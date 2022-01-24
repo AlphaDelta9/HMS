@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void run() {
                                     Log.e("Token", "IdToken validate failed\n" + errorMsg);
                                     finish();
-                                    startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
                                 }
                             });
                         }
@@ -182,9 +182,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClickButton(int item) {
+                Objects.requireNonNull(recyclerView.getAdapter()).notifyItemRemoved(item);
+                recyclerView.getAdapter().notifyItemRangeChanged(item,jsonArray.length());
 //                arrayList.remove(item);
                 jsonArray.remove(item);
-                recyclerView.getAdapter().notifyItemRemoved(item);
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
                         .putString(preferences.getString("open","items"),jsonArray.toString()).apply();
             }
