@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.19375" />
+        <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1828125" />
         <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/layout/activity_insert.xml" value="0.17760416666666667" />
         <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/layout/activity_item.xml" value="0.1503623188405797" />
         <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/layout/activity_login.xml" value="0.17760416666666667" />
@@ -10,6 +12,8 @@
         <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/layout/activity_scan.xml" value="0.17760416666666667" />
         <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/layout/activity_scan2.xml" value="0.17760416666666667" />
         <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/layout/item.xml" value="0.17760416666666667" />
+        <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.19375" />
+        <entry key="..\:/Michael/Documents/AndroidStudioProjects/PMC/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.19375" />
       </map>
     </option>
   </component>

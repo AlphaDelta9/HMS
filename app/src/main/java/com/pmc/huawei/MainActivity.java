@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         bannerView.setAdId("testw6vs28auh3");
         bannerView.setBannerAdSize(BannerAdSize.BANNER_SIZE_360_57);
         bannerView.setBannerRefresh(60);
-        bannerView.loadAd(new AdParam.Builder().build());
+//        bannerView.loadAd(new AdParam.Builder().build());
         mAuthParam = new AccountAuthParamsHelper(AccountAuthParams.DEFAULT_AUTH_REQUEST_PARAM)
                 .setIdToken().createParams();
         mAuthService = AccountAuthManager.getService(getApplicationContext(), mAuthParam);
@@ -82,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     Log.e("Token", "IdToken validate failed\n" + errorMsg);
-                                    finish();
+                                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit()
+                                            .putString("token",null).putString("open",null).apply();
+                                    finish();jsonArray=new JSONArray();
                                     startActivity(new Intent(getApplicationContext(),MainActivity.class));
                                 }
                             });
