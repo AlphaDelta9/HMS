@@ -8,4 +8,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="create">Create</string>
     <string name="remove_authorization">Remove Authorization</string>
+    <string name="export">Export</string>
+    <string name="backup">Backup</string>
+    <string name="restore">Restore</string>
 </resources>
