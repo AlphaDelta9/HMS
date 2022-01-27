@@ -31,3 +31,12 @@
 
 -keep class com.huawei.hms.ads.** {*; }
 -keep interface com.huawei.hms.ads.** {*; }
+
+-keepattributes SourceFileLineNumberTable,
+-keep class com.hianalytics.android.**{*;}
+
+
+-keepattributes SourceFile,LineNumberTable
+
+-keep class com.huawei.**{*;}
+

@@ -47,7 +47,7 @@ public class ItemActivity extends AppCompatActivity {
                 ItemActivity.this.requestPermissions(
                         new String[]{android.Manifest.permission.CAMERA,
                                 android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_CODE);
+                        REQUEST_CODE-1);
             }
         });
         findViewById(R.id.ExportButton).setOnClickListener(new View.OnClickListener() {
